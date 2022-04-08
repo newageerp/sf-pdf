@@ -13,8 +13,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PdfController extends OaBaseController
 {
-    protected EntityManagerInterface $entityManager;
-
     /**
      * @Route(path="/{schema}/{template}/{id}", methods={"GET"})
      */
@@ -32,7 +30,7 @@ class PdfController extends OaBaseController
         /**
          * @var  $repository
          */
-        $repository = $this->entityManager->getRepository($className);
+        $repository = $this->getEm()->getRepository($className);
 
         $data = $repository->find($id);
 
