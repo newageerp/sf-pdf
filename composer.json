@@ -1,0 +1,22 @@
+{
+  "name": "newageerp/sf-pdf",
+  "type": "symfony-bundle",
+  "autoload": {
+    "psr-4": {
+      "Newageerp\\SfPdf\\": ""
+    }
+  },
+  "require": {
+    "newageerp/sf-base-entity": "^0",
+    "symfony/framework-bundle": "^5.0",
+    "symfony/event-dispatcher": "^5.0",
+    "doctrine/orm": "^2"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Arturas Jegorenkovas",
+      "email": "info@newageerp.com"
+    }
+  ]
+}
