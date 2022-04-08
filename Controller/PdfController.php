@@ -1,4 +1,5 @@
 <?php
+
 namespace Newageerp\SfPdf\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,10 +35,10 @@ class PdfController extends OaBaseController
 
         $data = $repository->find($id);
 
-//        $fileName = 'Failas-' . date('Y-m-d') . '.pdf';
-//        if (method_exists($data, 'getPdfFileName')) {
-//            $fileName = $data->getPdfFileName();
-//        }
+        $fileName = 'Failas-' . date('Y-m-d') . '.pdf';
+        if (method_exists($data, 'getPdfFileName')) {
+            $fileName = $data->getPdfFileName();
+        }
 
         $templateName = 'pdf/' . $orgSchema . '/' . $template . '/index.html.twig';
 
@@ -50,7 +51,32 @@ class PdfController extends OaBaseController
         );
         $this->eventDispatcher->dispatch($event, SfPdfPreGenerateEvent::NAME);
 
-        return $this->render($templateName, $pdfParams);
+        if ($showHtml) {
+            return $this->render($templateName, $pdfParams);
+        }
+
+        $url = 'http://local.767.lt:7610/api/r/utils/html2pdf?token=' . $_ENV['NAE_SFS_TOKEN'];
+
+        $fields = json_encode([
+            'fileName' => $fileName,
+            'link' => $_ENV['NAE_SFS_FRONT_URL'] . '/app/nae-core/pdf/' . $orgSchema . '/' . $template . '/' . $id . '?showHtml=true'
+        ]);
+        $headers = [
+            'Content-Type: application/json'
+        ];
+
+        $curlInstance = curl_init();
+        curl_setopt($curlInstance, CURLOPT_URL, $url);
+        curl_setopt($curlInstance, CURLOPT_POST, true);
+        curl_setopt($curlInstance, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curlInstance, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlInstance, CURLOPT_POSTFIELDS, $fields);
+        $result = curl_exec($curlInstance);
+        curl_close($curlInstance);
+
+        $result = json_decode($result, true);
+
+        return $this->redirect($result['url']);
     }
 
 }
