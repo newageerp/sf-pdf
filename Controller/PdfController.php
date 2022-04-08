@@ -48,18 +48,23 @@ class PdfController extends OaBaseController
 
         $event = new SfPdfPreGenerateEvent(
             $pdfParams,
+            $fileName,
         );
         $this->eventDispatcher->dispatch($event, SfPdfPreGenerateEvent::NAME);
+
+        $pdfParams = $event->getData();
+        $fileName = $event->getFileName();
 
         if ($showHtml) {
             return $this->render($templateName, $pdfParams);
         }
 
-        $url = 'http://local.767.lt:7610/api/r/utils/html2pdf?token=' . $_ENV['NAE_SFS_TOKEN'];
+        $url = 'https://my.datasfs.com/api/r/utils/html2pdf?token=' . $_ENV['NAE_SFS_TOKEN'];
 
         $fields = json_encode([
             'fileName' => $fileName,
-            'link' => $_ENV['NAE_SFS_FRONT_URL'] . '/app/nae-core/pdf/' . $orgSchema . '/' . $template . '/' . $id . '?showHtml=true'
+            'link' => $_ENV['NAE_SFS_FRONT_URL'] . '/app/nae-core/pdf/' . $orgSchema . '/' . $template . '/' . $id . '?showHtml=true',
+            'download' => $download
         ]);
         $headers = [
             'Content-Type: application/json'

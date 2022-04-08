@@ -9,8 +9,11 @@ class SfPdfPreGenerateEvent extends Event
 
     protected array $data = [];
 
-    public function __construct(array $data) {
+    protected string $fileName = '';
+
+    public function __construct(array $data, string $fileName) {
         $this->data = $data;
+        $this->fileName = $fileName;
     }
 
     /**
@@ -27,5 +30,21 @@ class SfPdfPreGenerateEvent extends Event
     public function setData(array $data): void
     {
         $this->data = $data;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileName(): string
+    {
+        return $this->fileName;
+    }
+
+    /**
+     * @param string $fileName
+     */
+    public function setFileName(string $fileName): void
+    {
+        $this->fileName = $fileName;
     }
 }
