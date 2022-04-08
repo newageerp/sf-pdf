@@ -43,7 +43,8 @@ class PdfController extends OaBaseController
         $templateName = 'pdf/' . $orgSchema . '/' . $template . '/index.html.twig';
 
         $pdfParams = [
-            'data' => $data
+            'data' => $data,
+            'template' => $template,
         ];
 
         $event = new SfPdfPreGenerateEvent(
