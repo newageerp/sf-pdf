@@ -1,6 +1,8 @@
 <?php
+
 namespace Newageerp\SfPdf\Event;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class SfPdfPreGenerateEvent extends Event
@@ -11,9 +13,29 @@ class SfPdfPreGenerateEvent extends Event
 
     protected string $fileName = '';
 
-    public function __construct(array $data, string $fileName) {
+    protected Request $request;
+
+    public function __construct(array $data, string $fileName, Request $request)
+    {
         $this->data = $data;
         $this->fileName = $fileName;
+        $this->request = $request;
+    }
+
+    /**
+     * @return Request
+     */
+    public function getRequest(): Request
+    {
+        return $this->request;
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function setRequest(Request $request): void
+    {
+        $this->request = $request;
     }
 
     /**
