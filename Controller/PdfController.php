@@ -50,6 +50,7 @@ class PdfController extends OaBaseController
         $event = new SfPdfPreGenerateEvent(
             $pdfParams,
             $fileName,
+            $request,
         );
         $this->eventDispatcher->dispatch($event, SfPdfPreGenerateEvent::NAME);
 
