@@ -22,7 +22,7 @@ class PdfController extends OaBaseController
         $orgSchema = $schema = $request->get('schema');
         $template = $request->get('template');
         $id = $request->get('id');
-        $download = $request->get('download') === 'true' ? true : false;
+        $download = $request->get('download') === 'true';
         $showHtml = $request->get('showHtml') === 'true';
 
         $schema = implode('', array_map('ucfirst', explode("-", $schema)));
@@ -65,7 +65,7 @@ class PdfController extends OaBaseController
 
         $fields = json_encode([
             'fileName' => $fileName,
-            'link' => $_ENV['NAE_SFS_FRONT_URL'] . '/app/nae-core/pdf/' . $orgSchema . '/' . $template . '/' . $id . '?showHtml=true',
+            'link' => $_ENV['NAE_SFS_FRONT_URL'] . '/app/nae-core/pdf/' . $orgSchema . '/' . $template . '/' . $id . '?showHtml=true&skipStamp=' . $request->get('skipStamp') . '&skipSign=' . $request->get('skipSign'),
             'download' => $download
         ]);
         $headers = [
