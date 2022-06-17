@@ -86,4 +86,65 @@ class PdfController extends OaBaseController
         return $this->redirect($result['url']);
     }
 
+    /**
+     * @Route(path="/pdfInfo/{schema}/{template}/{id}", methods={"GET"})
+     */
+    public function pdfInfo(Request $request)
+    {
+        $orgSchema = $schema = $request->get('schema');
+        $template = $request->get('template');
+        $id = $request->get('id');
+
+        $schema = implode('', array_map('ucfirst', explode("-", $schema)));
+        $className = $this->convertSchemaToEntity($schema);
+
+        /**
+         * @var  $repository
+         */
+        $repository = $this->getEm()->getRepository($className);
+
+        $data = $repository->find($id);
+
+        $fileName = 'Failas-' . date('Y-m-d') . '.pdf';
+        if (method_exists($data, 'getPdfFileName')) {
+            $fileName = $data->getPdfFileName();
+        }
+
+        $pdfParams = [
+            'data' => $data,
+            'template' => $template,
+        ];
+
+        $event = new SfPdfPreGenerateEvent(
+            $pdfParams,
+            $fileName,
+            $request,
+        );
+        $this->eventDispatcher->dispatch($event, SfPdfPreGenerateEvent::NAME);
+
+        $fileName = $event->getFileName();
+
+        $url = 'https://my.datasfs.com/api/r/utils/html2pdf?token=' . $_ENV['NAE_SFS_TOKEN'];
+
+        $fields = json_encode([
+            'fileName' => $fileName,
+            'link' => $_ENV['NAE_SFS_FRONT_URL'] . '/app/nae-core/pdf/' . $orgSchema . '/' . $template . '/' . $id . '?showHtml=true&skipStamp=' . $request->get('skipStamp') . '&skipSign=' . $request->get('skipSign'),
+        ]);
+        $headers = [
+            'Content-Type: application/json'
+        ];
+
+        $curlInstance = curl_init();
+        curl_setopt($curlInstance, CURLOPT_URL, $url);
+        curl_setopt($curlInstance, CURLOPT_POST, true);
+        curl_setopt($curlInstance, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curlInstance, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlInstance, CURLOPT_POSTFIELDS, $fields);
+        $result = curl_exec($curlInstance);
+        curl_close($curlInstance);
+
+        $result = json_decode($result, true);
+
+        return $this->json($result);
+    }
 }
