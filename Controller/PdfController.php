@@ -55,7 +55,7 @@ class PdfController extends OaBaseController
         $this->eventDispatcher->dispatch($event, SfPdfPreGenerateEvent::NAME);
 
         $pdfParams = $event->getData();
-        $fileName = $event->getFileName();
+        $fileName = str_replace('/', '_', $event->getFileName());
 
         if ($showHtml) {
             return $this->render($templateName, $pdfParams);
@@ -122,7 +122,7 @@ class PdfController extends OaBaseController
         );
         $this->eventDispatcher->dispatch($event, SfPdfPreGenerateEvent::NAME);
 
-        $fileName = $event->getFileName();
+        $fileName = str_replace('/', '_', $event->getFileName());
 
         $url = 'https://my.datasfs.com/api/r/utils/html2pdf?token=' . $_ENV['NAE_SFS_TOKEN'];
 
