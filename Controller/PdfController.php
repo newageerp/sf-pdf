@@ -131,7 +131,7 @@ class PdfController extends OaBaseController
             'link' => $_ENV['NAE_SFS_FRONT_URL'] . '/app/nae-core/pdf/' . $orgSchema . '/' . $template . '/' . $id . '?showHtml=true&skipStamp=' . $request->get('skipStamp') . '&skipSign=' . $request->get('skipSign'),
         ]);
         $headers = [
-            'Content-Type: application/json'
+            'Content-Type: application/json; charset=utf-8'
         ];
 
         $curlInstance = curl_init();
